@@ -9,6 +9,9 @@
 #define TIMER1_DISABLE() T1CONbits.ON = 0
 #define TIMER1_SOURCE_INTERNAL() T1CONbits.TCS = 0 //TCS: Timer Clock Source Select bit
 #define TIMER1_PRESCALE_1_1() T1CONbits.TCKPS = 0x00 // Timer Input Clock Prescale Select bits
+//para button_setup()
+#define BUT_OFF() PORTDbits.RD0 = 0
+#define BUT_ON() PORTDbits.RD0 = 1
 
 /* FUNCTIONS */
 
@@ -47,10 +50,14 @@ void led_setup() {
     // Configure PORT registers' for LED2
     TRISDbits.TRISD1 = 0;
 }
+void button_setup(){    //User button with name BUT, connected to PIC32MX440F256H pin 46 
+    TRISDbits.TRISD0 = 1;   //configura el pin como entrada
+}
 
 int main() {
     delay_ms_setup();
     led_setup();
+    button_setup();
 
     while (1) {
         delay_ms(700);
