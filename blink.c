@@ -19,7 +19,7 @@
  * delay_ms_setup()
  *  * @info: For simulation, divide and truncate PR1 by 1000
  */
-void delay_ms_setup() {
+vvoid delay_ms_setup() { //TEMPORIZADOR
     //Configure Timer1 for 1us count with 8 MHz clock for simulator
     //Configure Timer1 for 1ms count with 8 MHz clock for loading
 
@@ -31,25 +31,35 @@ void delay_ms_setup() {
     //PR1 = 7999; 
     PR1 = 7999; // 32 bits register (16 available) to compare with TMR1    
 }
-
-void delay_ms(int ms) {
+void delay_ms (int ms){
     //Use Timer1 interrupt flag
-    TMR1 = 0;
+    TMR1 = 0; //??
     TIMER1_ENABLE();
-
-    while (ms--) {
-        IFS0bits.T1IF = 0;
-        while (!IFS0bits.T1IF) {
-            _nop();
+    
+    while(ms--){
+        IFS0bits.T1IF = 0;        //Desactiva el flag T1IF
+        while(!IFS0bits.T1IF){    //Si el flag no se ha activado
+            _nop();                     //No hace nada
         }
     }
     TIMER1_DISABLE();
 }
 
+int button(){
+    //use flag: IFS0bits.INT0IF
+    IFS0bits.INT0IF = 1;    //Activa el flag INTOIF
+    if(IFS0bits.INT0IF){    //Si el flag está activado
+        return 1;               //Significa que se ha pulsado el button
+    }
+    return -1;               //No se ha pulsado el button
+    }
+    
+
 void led_setup() {
     // Configure PORT registers' for LED2
-    TRISDbits.TRISD1 = 0;
+    TRISDbits.TRISD1 = 0;   //configura un pin como salida
 }
+
 void button_setup(){    //User button with name BUT, connected to PIC32MX440F256H pin 46 
     TRISDbits.TRISD0 = 1;   //configura el pin como entrada
 }
@@ -58,12 +68,14 @@ int main() {
     delay_ms_setup();
     led_setup();
     button_setup();
-
-    while (1) {
-        delay_ms(700);
-        TOGGLE_LED2(); // Toggle red LED
+    
+    while (button() == 1){       //Condicion de pulsar el interruptor
         delay_ms(300);
-        TOGGLE_LED2(); // Toggle red LED
+        TOGGLE_LED2();
+        delay_ms(300);
+        TOGGLE_LED2(); 
+        delay_ms(300);
+        TOGGLE_LED2();
     }
     return 0;
 }
