@@ -5,7 +5,7 @@
  * 4. Poner #includes y #defines en blink.h *OK!*
  */
 #include <xc.h>
-#include <blink.h>
+#include "blink.h"
 
 void delay_ms_setup() { //TEMPORIZADOR
     //Configure Timer1 for 1us count with 8 MHz clock for simulator
@@ -46,7 +46,7 @@ int main() {
     delay_ms_setup();
     led_setup();
     button_setup();
-    
+    while(1){
     while (IFS0bits.INT0IF){  //Condicion de pulsar el interruptor
         LED2_ON();
         delay_ms(300);
@@ -63,6 +63,6 @@ int main() {
         LED2_OFF();
         delay_ms(300);
     }
-    
+    }
     return 0;
 }
